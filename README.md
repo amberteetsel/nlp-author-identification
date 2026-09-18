@@ -1,1 +1,1 @@
-# nlp-author-identification
+# Language Models and Author Identification
