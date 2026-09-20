@@ -12,7 +12,6 @@ import pickle
 from pathlib import Path
 from collections import Counter
 from tokenizers import Tokenizer, models, trainers, pre_tokenizers, decoders
-print("Dependencies loaded successfully.")
 
 # Resolve Path
 def find_base_dir(marker=".git"):
@@ -175,7 +174,7 @@ class NGramModel:
                 if i >= 1:
                     bigram = (sent[i-1], sent[i])
                     self.bigram_counts[bigram] += 1
-                    self.bigram_context_counts[(sent[i-1]),] += 1
+                    self.bigram_context_counts[(sent[i-1],)] += 1
 
                 if i >= 2:
                     trigram = (sent[i-2], sent[i-1], sent[i])
