@@ -57,15 +57,15 @@ save to disk) before scoring anything. On subsequent runs it loads the
 saved tokenizer/models directly.
 
 ```bash
-python evaluate_test_set.py path/to/test_set
+python src/evaluate_test_set.py path/to/test_set
 ```
 
 **Optional flags:**
 ```bash
-python evaluate_test_set.py path/to/test_set --output my_predictions.csv
-python evaluate_test_set.py path/to/test_set --n 2 --k 0.01        # n-gram order / smoothing
-python evaluate_test_set.py path/to/test_set --vocab-size 5000     # only used if (re)training
-python evaluate_test_set.py path/to/test_set --force-retrain       # rebuild from raw text
+python src/evaluate_test_set.py path/to/test_set --output my_predictions.csv
+python src/evaluate_test_set.py path/to/test_set --n 2 --k 0.01        # n-gram order / smoothing
+python src/evaluate_test_set.py path/to/test_set --vocab-size 5000     # only used if (re)training
+python src/evaluate_test_set.py path/to/test_set --force-retrain       # rebuild from raw text
 ```
 
 **Accepted test set formats** (auto-detected from the path):
