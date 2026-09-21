@@ -4,44 +4,25 @@ Implementation of a BPE tokenizer, N-gram language models (bigram + trigram) wit
 
 ## Repository Structure
 
-├── data/
-
-│ ├── hobbit_raw.txt # Original source text.
-
-│ ├── hobbit_clean.txt # After Gutenberg/front-matter/chapter cleaning
-
-│ ├── hobbit_train.txt # 90% split
-
-│ ├── hobbit_holdout.txt # 10% split
-
-│ ├── lostworld_raw.txt
-
-│ ├── lostworld_clean.txt
-
-│ ├── lostworld_train.txt
-
-│ ├── lostworld_holdout.txt
-
-│ └── bpe_tokenizer_final.json # Saved trained BPE tokenizer
-
-├── models/
-
-│ ├── tolkien_model.pkl # Pickled trained NGramModel (Hobbit)
-
-│ └── doyle_model.pkl # Pickled trained NGramModel (Lost World)
-
-├── lm_utils.py # Core library: cleaning, tokenizer,
-│ # n-gram model, classifier
-
-├── evaluate_test_set.py # One-stop-shop script: builds the
-│ # pipeline if needed, scores a test set
-
-├── notebook.ipynb # Exploratory pipeline: vocab-size sweep,
-│ # k sweep, error analysis, validation
-
-├── report.pdf # Written report
-
-└── README.md
+- `data/`
+  - `hobbit_raw.txt` — original source text
+  - `hobbit_clean.txt` — after Gutenberg/front-matter/chapter cleaning
+  - `hobbit_train.txt` — 90% split
+  - `hobbit_holdout.txt` — 10% split
+  - `lostworld_raw.txt`
+  - `lostworld_clean.txt`
+  - `lostworld_train.txt`
+  - `lostworld_holdout.txt`
+  - `bpe_tokenizer_final.json` — saved trained BPE tokenizer
+- `models/`
+  - `tolkien_model.pkl` — pickled trained NGramModel (Hobbit)
+  - `doyle_model.pkl` — pickled trained NGramModel (Lost World)
+- `lm_utils.py` — core library: cleaning, tokenizer, n-gram model, classifier
+- `evaluate_test_set.py` — one-stop-shop script: builds the pipeline if needed, scores a test set
+- `notebook.ipynb` — exploratory pipeline: vocab-size sweep, k sweep, error analysis, validation
+- `requirements.txt`
+- `report.pdf` — written report
+- `README.md`
 
 ## Setup
 
