@@ -1,6 +1,6 @@
 # Language Models and Author Identification
 
-Implementation of a BPE tokenizer, N-gram language models (bigram + trigram) with add-k smoothing, perplexity evaluation, and author identification classifier distinguishing **J.R.R. Tolkien (*The Hobbit*) from **Arthur Conan Doyle** (*The Lost World*).
+Implementation of a BPE tokenizer, N-gram language models (bigram + trigram) with add-k smoothing, perplexity evaluation, and author identification classifier distinguishing **J.R.R. Tolkien** (*The Hobbit*) from **Arthur Conan Doyle** (*The Lost World*).
 
 ## Repository Structure
 
