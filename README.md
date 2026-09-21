@@ -17,9 +17,10 @@ Implementation of a BPE tokenizer, N-gram language models (bigram + trigram) wit
 - `models/`
   - `tolkien_model.pkl` — pickled trained NGramModel (Hobbit)
   - `doyle_model.pkl` — pickled trained NGramModel (Lost World)
-- `lm_utils.py` — core library: cleaning, tokenizer, n-gram model, classifier
-- `evaluate_test_set.py` — one-stop-shop script: builds the pipeline if needed, scores a test set
-- `notebook.ipynb` — exploratory pipeline: vocab-size sweep, k sweep, error analysis, validation
+- `src/`
+   - `lm_utils.py` — core library: cleaning, tokenizer, n-gram model, classifier
+   - `evaluate_test_set.py` — one-stop-shop script: builds the pipeline if needed, scores a test set
+   - `notebook.ipynb` — exploratory pipeline: vocab-size sweep, k sweep, error analysis, validation
 - `requirements.txt`
 - `report.pdf` — written report
 - `README.md`
