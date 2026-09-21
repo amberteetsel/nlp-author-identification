@@ -2,7 +2,8 @@
 .DS_Store
 custom_test/
 my_predictions.csv
-src/
+src/text_cleaning.ipynb
+src/tokenize.ipynb
 texts/
 
 # Byte-compiled / optimized / DLL files
