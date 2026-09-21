@@ -1,5 +1,7 @@
 # Custom
 .DS_Store
+custom_test/
+my_predictions.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
