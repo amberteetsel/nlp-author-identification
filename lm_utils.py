@@ -226,8 +226,16 @@ class NGramModel:
 # Author Classifier
 # ------------------------------------------------------------------------------
 
+def clean_test_passage(text):
+    """Light, safe normalization for arbitrary test passages."""
+    text = remove_gutenberg(text)
+    text = re.sub(r"\[Illustration.*?\]", "", text) # in case there's pictures
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
 def predict_author(text, tolkien_model, doyle_model, bpe, n=2, k=0.01):
     """Predicts author of input text based on perplexity"""
+    text = clean_test_passage(text)
     sentences = get_sentences(text)
     encoded_sentences = encode_sentences(sentences, bpe)
 
