@@ -134,7 +134,7 @@ def _find_column(fieldnames, candidates):
 # Training pipeline (only runs if artifacts missing or forced)
 # ------------------------------------------------------------------------------
 
-def build_pipeline(data_dir, models_dir, vocab_size=5000, force_retain=False):
+def build_pipeline(data_dir, models_dir, vocab_size=5000, force_retrain=False):
     """
     Guarantee trained tokenizer and author models exist on disk.
     Returns (bpe, tolkien_model, doyle_model).
@@ -145,7 +145,7 @@ def build_pipeline(data_dir, models_dir, vocab_size=5000, force_retain=False):
 
     artifacts_exist = tokenizer_path.exists() and tolkien_path.exists() and doyle_path.exists()
 
-    if artifacts_exist and not force_retain:
+    if artifacts_exist and not force_retrain:
         print("Found existing trained tokenizer and models — loading from disk.")
         bpe = BPETokenizer(vocab_size=vocab_size, pre_tokenizer="byte_level")
         bpe.load(str(tokenizer_path))
