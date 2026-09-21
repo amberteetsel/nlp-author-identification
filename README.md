@@ -4,8 +4,8 @@ Implementation of a BPE tokenizer, N-gram language models (bigram + trigram) wit
 
 ## Repository Structure
 
-├── data/
-│ ├── hobbit_raw.txt # Original source text
+├── data/   \n
+│ ├── hobbit_raw.txt # Original source text. \n
 │ ├── hobbit_clean.txt # After Gutenberg/front-matter/chapter cleaning
 │ ├── hobbit_train.txt # 90% split
 │ ├── hobbit_holdout.txt # 10% split
