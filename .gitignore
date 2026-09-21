@@ -2,6 +2,7 @@
 .DS_Store
 custom_test/
 my_predictions.csv
+src/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
