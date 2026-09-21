@@ -3,6 +3,7 @@
 custom_test/
 my_predictions.csv
 src/
+texts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
