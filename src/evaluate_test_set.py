@@ -21,10 +21,21 @@ Usage:
     python evaluate_test_set.py path/to/test_set --force-retrain
 
 Test set formats accepted:
+    - a tab-separated .txt file: "ID<TAB>passage text", one item per line
+      (this is the actual HW2 test set format — IDs are taken directly
+      from the file, not auto-generated)
     - a directory of .txt files (one passage per file)
     - a single .txt file, one passage per line OR blank-line separated
     - a .csv file with a text/passage column (and optional id column)
     - a .json file: a list of strings, or a list of {"id": ..., "text": ...}
+
+Output format:
+    - if --output ends in .txt (the default): plain "ID<TAB>Label" lines,
+      no header, no extra columns — matches the assignment's required
+      submission format exactly.
+    - if --output ends in .csv: full CSV with id, prediction, tolkien_ppl,
+      doyle_ppl columns (useful for your own analysis/report, not for
+      submission).
 """
 
 import argparse
@@ -78,15 +89,31 @@ def _load_from_directory(path):
 
 
 def _load_from_txt(path):
+    """
+    Parses the HW2 test set format: every line is
+        ID<whitespace>passage text
+    where the ID appears in the file as "ITEM-<number>" but must be
+    reformatted to "ID<number>" for output, per the assignment's
+    example format (e.g. "ID795", "ID21").
+    """
+    passages = []
     with open(path, encoding="utf-8") as f:
-        raw = f.read()
+        for line_num, raw_line in enumerate(f, start=1):
+            line = raw_line.rstrip("\n").rstrip("\r")
+            if not line.strip():
+                continue
+            parts = line.split(None, 1)
+            if len(parts) != 2:
+                raise ValueError(f"Line {line_num} doesn't have an ID and passage text: {line!r}")
+            raw_id, text = parts
 
-    blocks = [b.strip() for b in re.split(r"\n\s*\n", raw) if b.strip()]
-    if len(blocks) > 1:
-        return [(f"passage_{i}", b) for i, b in enumerate(blocks)]
+            m = re.match(r"ITEM-(\d+)", raw_id)
+            if not m:
+                raise ValueError(f"Line {line_num}: couldn't parse an ID number from {raw_id!r}")
+            item_id = f"ID{m.group(1)}"
 
-    lines = [l.strip() for l in raw.splitlines() if l.strip()]
-    return [(f"passage_{i}", l) for i, l in enumerate(lines)]
+            passages.append((item_id, text.strip()))
+    return passages
 
 
 def _load_from_csv(path):
@@ -131,7 +158,7 @@ def _find_column(fieldnames, candidates):
     return None
 
 # ------------------------------------------------------------------------------
-# Training pipeline (only runs if artifacts missing or forced)
+# Training pipeline
 # ------------------------------------------------------------------------------
 
 def build_pipeline(data_dir, models_dir, vocab_size=5000, force_retrain=False):
@@ -195,8 +222,8 @@ def build_pipeline(data_dir, models_dir, vocab_size=5000, force_retrain=False):
 
     # 4. Train author N-gram models
     print("Training author N-gram models...")
-    hobbit_encoded = encode_sentences(get_sentences(hobbit_train),bpe)
-    lostworld_encoded = encode_sentences(get_sentences(lostworld_train),bpe)
+    hobbit_encoded = encode_sentences(get_sentences(hobbit_train), bpe)
+    lostworld_encoded = encode_sentences(get_sentences(lostworld_train), bpe)
 
     tolkien_model = NGramModel(vocab_size=bpe.get_vocab_size())
     tolkien_model.train(hobbit_encoded)
@@ -229,6 +256,32 @@ def batch_predict(id_text_pairs, tolkien_model, doyle_model, bpe, n=2, k=0.01):
         })
     return results
 
+
+def write_predictions(results, output_path):
+    """
+    Writes predictions in the format matching the output file's extension:
+      .txt -> plain 'ID<TAB>Label' lines, no header (assignment submission format)
+      .csv -> full CSV with id, prediction, tolkien_ppl, doyle_ppl columns
+    """
+    ext = os.path.splitext(output_path)[1].lower()
+
+    if ext == ".csv":
+        with open(output_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["id", "prediction", "tolkien_ppl", "doyle_ppl"])
+            for r in results:
+                writer.writerow([
+                    r["id"],
+                    r["prediction"],
+                    f"{r['tolkien_ppl']:.4f}",
+                    f"{r['doyle_ppl']:.4f}",
+                ])
+    else:
+        # Plain submission format: "ID<TAB>Label", one line per result, no extras.
+        with open(output_path, "w", encoding="utf-8") as f:
+            for r in results:
+                f.write(f"{r['id']}\t{r['prediction']}\n")
+
 # ------------------------------------------------------------------------------
 # Main ** AI Code **
 # ------------------------------------------------------------------------------
@@ -238,7 +291,7 @@ def main():
         description="One-stop-shop: builds (if needed) and runs the author-ID classifier on a test set."
     )
     parser.add_argument("test_path", help="Path to test set file or directory")
-    parser.add_argument("--output", default="predictions.csv", help="Output CSV path")
+    parser.add_argument("--output", default="predictions.txt", help="Output path (.txt for submission format, .csv for full detail)")
     parser.add_argument("--n", type=int, default=2, help="N-gram order (2=bigram, 3=trigram)")
     parser.add_argument("--k", type=float, default=0.01, help="Add-k smoothing value")
     parser.add_argument("--vocab-size", type=int, default=5000, help="BPE vocab size (only used if (re)training)")
@@ -264,18 +317,16 @@ def main():
 
     results = batch_predict(test_passages, tolkien_model, doyle_model, bpe, n=args.n, k=args.k)
 
-    with open(args.output, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(["id", "prediction", "tolkien_ppl", "doyle_ppl"])
-        for r in results:
-            writer.writerow([
-                r["id"],
-                r["prediction"],
-                f"{r['tolkien_ppl']:.4f}",
-                f"{r['doyle_ppl']:.4f}",
-            ])
+    write_predictions(results, args.output)
 
-    print(f"Saved {len(results)} predictions to {args.output}")
+    # Sanity check: line counts must match exactly, per assignment instructions
+    n_input = len(test_passages)
+    with open(args.output, encoding="utf-8") as f:
+        n_output = sum(1 for _ in f)
+    if n_input != n_output:
+        raise AssertionError(f"Line count mismatch! input={n_input}, output={n_output}")
+
+    print(f"Saved {len(results)} predictions to {args.output} (line count verified).")
 
 
 if __name__ == "__main__":

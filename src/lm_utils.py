@@ -242,7 +242,7 @@ def predict_author(text, tolkien_model, doyle_model, bpe, n=2, k=0.01):
     tolkien_ppl = tolkien_model.perplexity(encoded_sentences, n=n, k=k)
     doyle_ppl = doyle_model.perplexity(encoded_sentences, n=n, k=k)
 
-    author_id = "J.R.R. Tolkien" if tolkien_ppl < doyle_ppl else "Arthur Conan Doyle"
+    author_id = "Tolkien" if tolkien_ppl < doyle_ppl else "Doyle"
 
     return author_id, tolkien_ppl, doyle_ppl
 
